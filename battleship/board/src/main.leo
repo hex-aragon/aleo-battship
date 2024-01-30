@@ -1,4 +1,3 @@
-// The `program` scope defines the data types, functions, and state associated with the `board` program.
 program board.aleo {
     // Battleship boards are represented by 8x8 squares.
     // A u64 is all that is required to represent a hit or a miss on a single board.
@@ -26,11 +25,11 @@ program board.aleo {
         opponent: address,
     ) -> board_state {
         return board_state {
-            owner: self.signer,
+            owner: self.caller,
             hits_and_misses: 0u64,
             played_tiles: 0u64,
             ships,
-            player_1: self.signer,
+            player_1: self.caller,
             player_2: opponent,
             game_started: false,
         };
@@ -56,22 +55,21 @@ program board.aleo {
         };
     }
 
-    // Returns a new board state record that includes all the played tiles,
-    // updated with a given shot.
-    // Fails if the shot has been fired before.
+    // Returns a new board state record that includes all the played tiles.
+    // Fails if r1 has been played before.
     transition update_played_tiles(
         // The record of the board to update.
         board: board_state,
         // The u64 equivalent of a bitstring fire coordinate to send to the opponent.
         shoot: u64,
     ) -> board_state {
-        // Need to make sure shoot is a valid move. Only one bit of shoot should be flipped.
+        // Need to make sure r1 is a valid move. Only one bit of r1 should be flipped.
         let flip_bit: u64 = shoot - 1u64;
         // bitwise and operation
         let check_move: u64 = shoot & flip_bit;
         assert_eq(check_move, 0u64);
 
-        // Need to make sure shoot is a valid move given the played_tiles: no bits should overlap.
+        // Need to make sure r1 is a valid move given the played_tiles. no bits should overlap.
         let check_tiles: u64 = shoot & board.played_tiles;
         assert_eq(check_tiles, 0u64);
 
@@ -89,8 +87,7 @@ program board.aleo {
         };
     }
 
-    // Returns a new board state record that includes all the hits and misses,
-    // updated with a given hit-or-miss from a shot.
+    // Returns a new board state record that includes all the hits and misses.
     transition update_hits_and_misses(
         // The record of the board to update.
         board: board_state,
