@@ -1,24 +1,23 @@
-// 가져온 프로그램.
 import board.aleo;
 import move.aleo;
 import verify.aleo;
 
-// 'program' 스코프는 'battleship' 프로그램과 관련된 데이터 타입, 함수 및 상태를 정의합니다.
+// The 'battleship.aleo' program.
 program battleship.aleo {
-    // 새로운 battleship 게임을 나타내는 레코드를 반환합니다.
+    // Returns a new record representing a new game of battleship.
     transition initialize_board(
-        // 8x8 그리드에서 항모의 배치를 나타내는 u64 표현입니다. 길이 = 5.
+        // The u64 representation of a carrier's placement in an 8x8 grid. Length = 5.
         carrier: u64,
-        // 8x8 그리드에서 전함의 배치를 나타내는 u64 표현입니다. 길이 = 4.
+        // The u64 representation of a battleship's placement in an 8x8 grid. Length = 4.
         battleship: u64,
-        // 8x8 그리드에서 순양함의 배치를 나타내는 u64 표현입니다. 길이 = 3.
+        // The u64 representation of a cruiser's placement in an 8x8 grid. Length = 3.
         cruiser: u64,
-        // 8x8 그리드에서 구축함의 배치를 나타내는 u64 표현입니다. 길이 = 2.
+        // The u64 representation of a destroyer's placement in an 8x8 grid. Length = 2.
         destroyer: u64,
-        // 상대방의 주소입니다.
+        // The address of the opponent.
         player: address,
     ) -> board.aleo/board_state.record {
-        // 각각의 선박 배치 비트열이 유효한지 확인합니다.
+        // Verify that each individual ship placement bitstring is valid.
         let valid_carrier: bool = verify.aleo/validate_ship(carrier, 5u64, 31u64, 4311810305u64);
         assert(valid_carrier);
 
@@ -31,74 +30,76 @@ program battleship.aleo {
         let valid_destroyer: bool = verify.aleo/validate_ship(destroyer, 2u64, 3u64, 257u64);
         assert(valid_destroyer);
 
-        // 모든 선박 배치를 결합하여 보드를 생성합니다.
+        // Create the board with all the ship placements combined.
         let board: u64 = verify.aleo/create_board(carrier, battleship, cruiser, destroyer);
 
-        // 보드 상태 레코드를 초기화합니다.
-        let state: board_state = board.aleo/new_board_state(board, player);
+        // Initialize the board state record.
+        let state: board.aleo/board_state = board.aleo/new_board_state(board, player);
 
         return state;
     }
 
-    // 시작된 게임 상태가 된 업데이트된 board_state.record를 반환하며, 더 이상 이를 사용하여 새로운 게임에 참여하거나 시작할 수 없습니다.
-    // 상대방이 소유한 더미 이동 레코드를 반환합니다.
+    // Returns an updated board state record that has been started. This board cannot be used to start any other games.
+    // Returns a dummy move record owned by the opponent.
+    // This function commits a given board to a game with an opponent and creates the initial dummy move.
     transition offer_battleship(
-        // 게임을 시작할 보드 레코드입니다.
+        // The board record to start a game with.
         board: board.aleo/board_state.record,
     ) -> (board.aleo/board_state.record, move.aleo/move.record) {
-        let state: board_state = board.aleo/start_board(board);
-        let dummy: move = move.aleo/start_game(board.player_2);
+        let state: board.aleo/board_state = board.aleo/start_board(board);
+        let dummy: move.aleo/move = move.aleo/start_game(board.player_2);
 
         return (state, dummy);
     }
 
-    // 시작된 게임 상태가 된 업데이트된 board_state.record를 반환하며, 이를 더 이상 참여하거나 새로운 게임을 시작할 수 없습니다.
-    // 상대방이 소유한 더미 이동 레코드를 반환합니다.
+    // Returns updated board_state.record that has been started and can no longer be used to join or start new games.
+    // Returns dummy move record owned by the opponent.
     transition start_battleship(
-        // 게임을 진행할 보드 레코드입니다.
+        // The board record to play the game with.
         board: board.aleo/board_state.record,
-        // 게임을 시작하기 위한 이동 레코드입니다. offer_battleship에서 생성된 더미 이동 레코드여야 합니다.
+        // The move record to play to begin the game. This should be the dummy move record created from offer_battleship.
         move_start: move.aleo/move.record,
     ) -> (board.aleo/board_state.record, move.aleo/move.record) {
-        // 이동 플레이어와 보드 플레이어가 일치하는지 확인합니다.
+        // Validate that the move players and board players match each other.
         assert_eq(board.player_1, move_start.player_2);
         assert_eq(board.player_2, move_start.player_1);
 
-        let state: board_state = board.aleo/start_board(board);
-        let dummy: move = move.aleo/start_game(board.player_2);
+        let state: board.aleo/board_state = board.aleo/start_board(board);
+        let dummy: move.aleo/move = move.aleo/start_game(board.player_2);
 
         return (state, dummy);
     }
 
-    // 업데이트된 board 레코드를 반환합니다.
-    // 상대방이 소유한 새로운 이동 레코드를 반환합니다.
+    // Returns updated board record.
+    // Returns new move record owned by opponent.
     transition play(
-        // 업데이트할 board 레코드입니다.
+        // The board record to update.
         board: board.aleo/board_state.record,
-        // 상대방으로부터 수신한 이동 레코드입니다.
+        // The incoming move from the opponent.
         move_incoming: move.aleo/move.record,
-        // 상대방의 보드에서 다음에 플레이할 좌표의 비트 표현에 해당하는 u64입니다.
+        // The u64 equivalent of the bitwise representation of the next coordinate to play on the opponent's board.
         shoot: u64,
     ) -> (board.aleo/board_state.record, move.aleo/move.record) {
-        // 게임이 시작되었는지 확인합니다. 이로써 플레이어들이 게임을 시작하고 나서 새로운 보드를 만들어 사용하는 것을 방지합니다.
+        // Verify the board has been started. This prevents players from starting a game and then creating
+        // a brand new board to play with.
         assert(board.game_started);
 
-        // 이동 플레이어와 보드 플레이어가 일치하는지 확인합니다.
+        // Validate that the move players and board players match each other.
         assert_eq(board.player_1, move_incoming.player_2);
         assert_eq(board.player_2, move_incoming.player_1);
 
-        // 자신의 보드에서 좌표를 플레이합니다. 유효한 이동이 아닌 경우 실패합니다.
-        let hit_or_miss: board_state = board.aleo/update_played_tiles(board, shoot);
+        // Play coordinate on own board. Will fail if not a valid move.
+        let hit_or_miss: board.aleo/board_state = board.aleo/update_played_tiles(board, shoot);
 
-        // 자신의 보드를 마지막 공격 결과로 업데이트합니다.
-        let next_board: board_state = board.aleo/update_hits_and_misses(hit_or_miss, move_incoming.prev_hit_or_miss);
+        // Update own board with result of last shot.
+        let next_board: board.aleo/board_state = board.aleo/update_hits_and_misses(hit_or_miss, move_incoming.prev_hit_or_miss);
 
-        // 상대방의 공격 좌표가 명중인지 확인합니다.
+        // Assess whether incoming fire coordinate is a hit.
         let is_hit: u64 = move_incoming.incoming_fire_coordinate & board.ships;
 
-        // 다음 이동을 생성합니다.
-        let next_move: move = move.aleo/create_move(move_incoming, shoot, is_hit);
+        let next_move: move.aleo/move = move.aleo/create_move(move_incoming, shoot, is_hit);
 
         return (next_board, next_move);
     }
 }
+

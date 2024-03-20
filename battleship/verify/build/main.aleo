@@ -20,6 +20,24 @@ closure bitcount:
     output r13 as u64;
 
 
+function bitcount_test:
+    input r0 as u64.private;
+    div r0 2u64 into r1;
+    div r0 4u64 into r2;
+    div r0 8u64 into r3;
+    and r1 8608480567731124087u64 into r4;
+    and r2 3689348814741910323u64 into r5;
+    and r3 1229782938247303441u64 into r6;
+    sub r0 r4 into r7;
+    sub r7 r5 into r8;
+    sub r8 r6 into r9;
+    div r9 16u64 into r10;
+    add r9 r10 into r11;
+    and r11 1085102592571150095u64 into r12;
+    rem r12 255u64 into r13;
+    output r13 as u64.private;
+
+
 closure adjacency_check:
     input r0 as u64;
     input r1 as u64;

@@ -21,6 +21,25 @@ program verify.aleo {
         return r11;
     }
 
+    transition bitcount_test(bits: u64) -> u64 {
+        let r1: u64 = bits / 2u64;
+        let r2: u64 = bits / 4u64;
+        let r3: u64 = bits / 8u64;
+
+        let r4: u64 = r1 & 8608480567731124087u64;
+        let r5: u64 = r2 & 3689348814741910323u64;
+        let r6: u64 = r3 & 1229782938247303441u64;
+
+        let r7: u64 = bits - r4 - r5 - r6;
+
+        let r8: u64 = r7 / 16u64;
+        let r9: u64 = r7 + r8;
+        let r10: u64 = r9 & 1085102592571150095u64;
+        let r11: u64 = r10 % 255u64;
+
+        return r11;
+    }
+
     // Returns boolean of whether all the flipped bits in location are "adjacent". Horizontally, this means all flipped bits are
     // directly next to each other (111). Vertically, this means all flipped bits are separated by 7 unflipped bits
     // (10000000100000001).
