@@ -1,0 +1,23 @@
+{
+  "program": "zkbattle_ship_robert_23504.aleo",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "board.aleo",
+      "location": "local",
+      "path": "board"
+    },
+    {
+      "name": "move.aleo",
+      "location": "local",
+      "path": "move"
+    },
+    {
+      "name": "verify.aleo",
+      "location": "local",
+      "path": "verify"
+    }
+  ]
+}

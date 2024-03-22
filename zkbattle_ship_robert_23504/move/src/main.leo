@@ -1,24 +1,23 @@
-// 'program' 스코프는 'move' 프로그램과 관련된 데이터 타입, 함수, 그리고 상태를 정의한다.
 program move.aleo {
     record move {
         owner: address,
         incoming_fire_coordinate: u64,
         player_1: address,
         player_2: address,
-        // 한 개의 플립된 비트는 명중을 나타낸다. 플립된 비트가 없으면 실패한다.
+        // One flipped bit indicates a hit. No flipped bits indicates a miss.
         prev_hit_or_miss: u64,
     }
 
-    // 상대방이 소유한 새로운 move 레코드를 반환한다.
+    // Returns new move record owned by the opponent.
     transition create_move(
-        // 상대방이 생성한 move 레코드.
+        // The move record created by the opponent.
         move_record: move,
-        // 상대방에게 전송할 incoming_fire_coordinate 비트열의 u64 표현.
+        // The u64 representation of incoming_fire_coordinate, the bitstring fire coordinate to send to the opponent.
         incoming_fire_coordinate: u64,
-        // 이 플레이어의 이전 히트 또는 미스로서의 prev_hit_or_miss 비트열의 u64 표현.
+        // The u64 representation of prev_hit_or_miss, this player's previous fire coordinate as a hit or miss.
         prev_hit_or_miss: u64,
     ) -> move {
-        // 새로운 move 레코드는 상대방이 소유해야 한다.
+        // A new move record should be created and owned by the opponent.
         let one_is_owner: bool = move_record.player_1 == move_record.owner;
         let opponent: address = one_is_owner ? move_record.player_2 : move_record.player_1;
 
@@ -31,8 +30,8 @@ program move.aleo {
         };
     }
 
-    // 상대방이 소유한 move 레코드를 반환한다.
-    // 이 move 레코드에는 더미 화재 좌표 및 이전 명중 또는 실패가 포함되어 있다.
+    // Returns the move record owned by the opponent.
+    // Note, this move record contains dummy fire coordinates and previous hit or miss.
     transition start_game(player_2: address) -> move {
         return move {
             owner: player_2,
