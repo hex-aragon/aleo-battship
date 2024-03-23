@@ -2,7 +2,7 @@
 name = "board.aleo"
 location = "local"
 path = "/home/robert/work/aleo/aleo-battship/battleship/board"
-checksum = "da94274230d0c0c3deb96d80e07ad9db8bbf53264286c14cc3231b7a8b7ef380"
+checksum = "10db510eec882d98f94a64219cb1b3e51efa5f2c3c80383d4b0bded07744f0da"
 dependencies = []
 
 [[package]]
@@ -16,5 +16,5 @@ dependencies = []
 name = "verify.aleo"
 location = "local"
 path = "/home/robert/work/aleo/aleo-battship/battleship/verify"
-checksum = "2c2035ebd70500b7e5a9a6198bed1a1163cd1ddfd09128db8f4c16cf23ad2c62"
+checksum = "3b6ad6df35ec3f8a20e770f346dc0c201b1a71c8511785faf82150402530c6b2"
 dependencies = []

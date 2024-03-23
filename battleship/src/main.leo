@@ -41,7 +41,7 @@ program battleship.aleo {
         return state;
     }
 
-    // 시작된 게임 상태가 된 업데이트된 board_state.record를 반환하며,
+    // 업데이트된 board_state.record를 반환하며,
     // 더 이상 이를 사용하여 새로운 게임에 참여하거나 시작할 수 없습니다.
     // 상대방이 소유한 더미 이동 레코드를 반환합니다.
     transition offer_battleship(
@@ -49,9 +49,13 @@ program battleship.aleo {
         board: board.aleo/board_state.record,
     ) -> (board.aleo/board_state.record, move.aleo/move.record) {
         
+        //start_board 함수는 game_started: true 값을 추가해서 반환한다.
         let state: board.aleo/board_state = board.aleo/start_board(board);
+
+        //상대방이 소유한 무브레코드를 반환한다. 
         let dummy: move.aleo/move = move.aleo/start_game(board.player_2);
 
+        //보드 스테이트와 상대방이 기록할 더미 레코드 반환
         return (state, dummy);
     }
 

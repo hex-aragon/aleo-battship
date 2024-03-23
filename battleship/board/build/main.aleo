@@ -25,6 +25,14 @@ function start_board:
     output r2 as board_state.record;
 
 
+function start_board_test:
+    input r0 as board_state.record;
+    not r0.game_started into r1;
+    assert.eq r1 true;
+    cast r0.owner r0.hits_and_misses r0.played_tiles r0.ships r0.player_1 r0.player_2 true into r2 as board_state.record;
+    output r2 as board_state.record;
+
+
 function update_played_tiles:
     input r0 as board_state.record;
     input r1 as u64.private;

@@ -4,7 +4,8 @@ program board.aleo {
     // 맨 위 행부터 왼쪽에서 오른쪽으로, 명중은 1이고 실패는 0이다.
     // 첫 번째 움직임에서 1행 3열에 명중한 경우:
     // 00100000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-    // 두 번째 u64는 어떤 사각형이 플레이되었는지를 나타내며, 1은 플레이된 사각형이고 0은 플레이되지 않은 사각형이다.
+    // 두 번째 u64는 어떤 사각형이 플레이되었는지를 나타내며, 1은 플레이된 사각형이고 
+    // 0은 플레이되지 않은 사각형이다.
     record board_state {
         owner: address,
         // 상대방 보드에서 등록된 명중과 실패.
@@ -37,6 +38,24 @@ program board.aleo {
     // 시작된 board_state가 된 새로운 board_state를 반환한다.
     // 이 보드가 이전에 게임을 시작한 적이 있는지 확인한다.
     transition start_board(
+        // 시작할 보드의 레코드. 보드는 한 번만 시작될 수 있다.
+        board: board_state,
+    ) -> board_state {
+        // 이 보드가 이전에 게임을 시작한 적이 없는지 확인한다.
+        assert(!board.game_started);
+
+        return board_state {
+            owner: board.owner,
+            hits_and_misses: board.hits_and_misses,
+            played_tiles: board.played_tiles,
+            ships: board.ships,
+            player_1: board.player_1,
+            player_2: board.player_2,
+            game_started: true,
+        };
+    }
+
+    transition start_board_test(
         // 시작할 보드의 레코드. 보드는 한 번만 시작될 수 있다.
         board: board_state,
     ) -> board_state {
