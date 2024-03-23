@@ -59,7 +59,7 @@ program battleship.aleo {
         return (state, dummy);
     }
 
-    // 시작된 게임 상태가 된 업데이트된 board_state.record를 반환하며, 
+    // 시작된 게임 상태가 된  board_state.record를 반환하며, 
     // 이를 더 이상 참여하거나 새로운 게임을 시작할 수 없습니다.
     // 상대방이 소유한 더미 이동 레코드를 반환합니다.
     transition start_battleship(
@@ -73,7 +73,9 @@ program battleship.aleo {
         assert_eq(board.player_1, move_start.player_2);
         assert_eq(board.player_2, move_start.player_1);
 
+        //game_started: true인 값을 추가해서 반환한다. 
         let state: board.aleo/board_state = board.aleo/start_board(board);
+        //상대방이 소유한 무브 레코드를 반환
         let dummy: move.aleo/move = move.aleo/start_game(board.player_2);
 
         return (state, dummy);
@@ -85,6 +87,7 @@ program battleship.aleo {
         // 업데이트할 board 레코드입니다.
         board: board.aleo/board_state.record,
         // 상대방으로부터 수신한 이동 레코드입니다.
+        // incoming_fire_coordinate은 shoot으로 들어온 u64 
         move_incoming: move.aleo/move.record,
         // 상대방의 보드에서 다음에 플레이할 좌표의 비트 표현에 해당하는 u64입니다.
         shoot: u64,
@@ -94,6 +97,7 @@ program battleship.aleo {
         assert(board.game_started);
 
         // 무브 플레이어와 보드 플레이어가 일치하는지 확인합니다.
+        // 무브 보드는 상대방에게 반환하기 때문에 플레이어1은 플레이어2로, 플레이어2는 플레이어1로 확인한다.
         assert_eq(board.player_1, move_incoming.player_2);
         assert_eq(board.player_2, move_incoming.player_1);
 
