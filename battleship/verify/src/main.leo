@@ -209,7 +209,7 @@ program verify.aleo {
         return ship_is_valid;
     }
 
-        // 배치된 배가 유효한지 여부를 반환한다.
+    // 배치된 배가 유효한지 여부를 반환한다.
     transition validate_ship_test (
         // 8x8 그리드에서 배의 배치를 나타내는 u64 표현.
         ship: u64,
